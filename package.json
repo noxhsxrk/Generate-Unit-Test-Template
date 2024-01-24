@@ -3,7 +3,7 @@
   "displayName": "Generate Unit Test Template",
   "description": "Generate Unit Test Template for VSCode",
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "noxhsxrk",
   "engines": {
     "vscode": "^1.85.0"

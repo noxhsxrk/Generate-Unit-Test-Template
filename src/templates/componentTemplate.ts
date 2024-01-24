@@ -6,7 +6,7 @@ const componentTemplate = (
   import { fireEvent } from '@testing-library/react';
   
   import { renderWithProviders } from '../../../test/renderWithProviders';
-  ${importStatement}
+  ${relativeImportPath}
   
   describe('${componentName}', () => {
     it('should render correctly', () => {

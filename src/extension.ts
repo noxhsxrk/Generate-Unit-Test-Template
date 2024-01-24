@@ -56,13 +56,13 @@ const isComponent = (content: string): boolean => {
 
   let isJsxElement = false;
 
-  function visit(node: ts.Node) {
+  const visit = (node: ts.Node) => {
     if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
       isJsxElement = true;
     }
 
     ts.forEachChild(node, visit);
-  }
+  };
 
   visit(sourceFile);
 
@@ -70,7 +70,10 @@ const isComponent = (content: string): boolean => {
 };
 
 const isApi = (content: string): boolean => {
-  return /from\s+['"]\.\.\/services\/http_request['"]/i.test(content);
+  return (
+    /from\s+['"]\.\.\/services\/http_request['"]/i.test(content) ||
+    /getGraphqlClient()/i.test(content)
+  );
 };
 
 const generateTestContent = (
@@ -82,7 +85,7 @@ const generateTestContent = (
 
   const relativeImportPath = path.relative(
     path.dirname(currentFilePath),
-    path.join(path.dirname(currentFilePath), `${name}.ts`)
+    path.join(path.dirname(currentFilePath), `${name}`)
   );
 
   const isComponentFile = isComponent(originalContent);
@@ -101,12 +104,10 @@ const generateTestContent = (
     template = functionTemplate;
   }
 
-  return template(relativeImportPath, importStatement, name);
+  return template(importStatement, relativeImportPath, name);
 };
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("Test Generator extension is now active.");
-
   let disposable = vscode.commands.registerCommand(
     "generate-unit-test-template.generateTestFile",
     () => {
