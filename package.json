@@ -9,14 +9,14 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Snippets"
+    "Other"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "generate-unit-test-template.generateTestFile",
+        "command": "x.generateTestFile",
         "title": "Generate Unit Test Template"
       }
     ]

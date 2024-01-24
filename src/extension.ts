@@ -108,12 +108,9 @@ const generateTestContent = (
 };
 
 export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand(
-    "generate-unit-test-template.generateTestFile",
-    () => {
-      generateTestFile();
-    }
-  );
+  let disposable = vscode.commands.registerCommand("x.generateTestFile", () => {
+    generateTestFile();
+  });
 
   context.subscriptions.push(disposable);
 }
