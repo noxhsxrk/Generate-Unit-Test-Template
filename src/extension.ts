@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import * as ts from "typescript";
 import componentTemplate from "./templates/componentTemplate";
 import apiTemplate from "./templates/apiTemplate";
 import functionTemplate from "./templates/functionTemplate";
@@ -47,33 +46,15 @@ const generateTestFile = () => {
 };
 
 const isComponent = (content: string): boolean => {
-  const sourceFile = ts.createSourceFile(
-    "temp.tsx",
-    content,
-    ts.ScriptTarget.Latest,
-    true
-  );
+  const jsxElementRegex = /<\s*\//;
 
-  let isJsxElement = false;
-
-  const visit = (node: ts.Node) => {
-    if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
-      isJsxElement = true;
-    }
-
-    ts.forEachChild(node, visit);
-  };
-
-  visit(sourceFile);
-
-  return isJsxElement;
+  return jsxElementRegex.test(content);
 };
 
 const isApi = (content: string): boolean => {
-  return (
-    /from\s+['"]\.\.\/services\/http_request['"]/i.test(content) ||
-    /getGraphqlClient()/i.test(content)
-  );
+  const apiNameRegex = /(\w+)Api\b/;
+
+  return apiNameRegex.test(content);
 };
 
 const generateTestContent = (
@@ -95,16 +76,13 @@ const generateTestContent = (
     isComponentFile || isApiFile ? name : `{ ${name} }`
   } from '../${name}';`;
 
-  let template;
-  if (isComponentFile) {
-    template = componentTemplate;
-  } else if (isApiFile) {
-    template = apiTemplate;
-  } else {
-    template = functionTemplate;
+  if (isApiFile) {
+    return apiTemplate(importStatement, name);
+  } else if (isComponentFile) {
+    return componentTemplate(importStatement, relativeImportPath, name);
   }
 
-  return template(importStatement, relativeImportPath, name);
+  return functionTemplate(importStatement, name);
 };
 
 export function activate(context: vscode.ExtensionContext) {
